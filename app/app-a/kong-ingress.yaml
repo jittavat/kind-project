@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-a-ingress
+  namespace: test
+  annotations:
+    konghq.com/strip-path: "true"    
+    kubernetes.io/ingress.class: kong
+spec:
+  rules:
+  - host: test.example.com
+    http:
+      paths:
+      - path: /app-a
+        pathType: Prefix
+        backend:
+          service:
+            name: app-a-service
+            port: 
+              number: 80
+        
+
