@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: krakend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krakend-deployment
+  namespace: krakend
+spec:
+  selector:
+    matchLabels:
+      app: krakend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: krakend
+    spec:
+      containers:
+      - name: krakend
+        image: devopsfaith/krakend
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GIN_MODE
+          value: release
+        command: 
+        - /bin/sh
+        - -ec
+        - |-
+          cat <<EOF >/tmp/krakend.json
+          {
+              "version": 2,
+              "name": "KrakenD on k8s",
+              "port": 8080,
+              "host": [ "krakend.example.com" ],
+              "endpoints": [
+                  {
+                      "endpoint": "/app-a",
+                      "backend": [
+                          {
+                              "host": [ "http://app-a-service.test" ],
+                              "url_pattern": "/",
+                              "is_collection": true
+                          }
+                      ]
+                  },
+                  {
+                      "endpoint": "/app-b",
+                      "backend": [
+                          {
+                              "host": [ "http://app-b-service.test" ],
+                              "url_pattern": "/"
+                          }
+                      ]
+                  }
+              ]
+          }
+          EOF
+          /usr/bin/krakend run -d -c /tmp/krakend.json -p 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: krakend-service
+  namespace: krakend
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    nodePort: 30020
+    protocol: TCP
+  selector:
+    app: krakend

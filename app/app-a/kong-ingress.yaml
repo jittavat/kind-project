@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: kong
 spec:
   rules:
-  - host: test.example.com
+  - host: kong.example.com
     http:
       paths:
       - path: /app-a
