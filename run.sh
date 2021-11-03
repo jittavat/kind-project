@@ -4,10 +4,10 @@ kind create cluster --config kind-example-config.yaml
 kubectl cluster-info --context kind-kind
 
 echo "############# Setup Kong ############# "
-helm repo add kong https://charts.konghq.com
-helm repo update
+# helm repo add kong https://charts.konghq.com
+# helm repo update
 kubectl apply -f kong/kong.yaml
-helm install kong/kong --set proxy.type=NodePort,proxy.http.nodePort=31500,proxy.tls.nodePort=32500 --generate-name --namespace kong
+# helm install kong/kong --set proxy.type=NodePort,proxy.http.nodePort=31500,proxy.tls.nodePort=32500 --generate-name --namespace kong
 
 echo "############# Setup KrakenD ############# "
 kubectl apply -f krakend/krakend.yaml
