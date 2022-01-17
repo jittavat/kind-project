@@ -1,0 +1,14 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: test-rate-limit
+  namespace: test
+config: 
+  second: 5
+  hour: 10000
+  policy: local
+  fault_tolerant: true
+  hide_client_headers: false
+plugin: rate-limiting
+
+    
